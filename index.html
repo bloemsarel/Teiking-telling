@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎯 SKIET TELLING STELSEL</title>
+    <title>🎯 AI SKIET TELLING STELSEL</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,6 @@
 
         :root {
             --primary: #ff6b35;
-            --primary-dark: #e55a2b;
             --secondary: #ffd23f;
             --dark-bg: #0a0a0a;
             --dark-card: #1a1a1a;
@@ -23,6 +22,7 @@
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
             --border: #333333;
+            --ai-blue: #00d9ff;
         }
 
         body {
@@ -35,7 +35,6 @@
             width: 100%;
         }
 
-        /* Header */
         .header {
             background: linear-gradient(135deg, var(--dark-elevated) 0%, #1a1a1a 100%);
             padding: 12px 16px;
@@ -52,11 +51,23 @@
         }
 
         .header h1 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-badge {
+            background: var(--ai-blue);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 900;
         }
 
         .header-actions {
@@ -85,7 +96,6 @@
             transform: scale(0.95);
         }
 
-        /* Main Container */
         .main-container {
             position: fixed;
             top: 64px;
@@ -93,26 +103,17 @@
             left: 0;
             right: 0;
             overflow-y: auto;
-            overflow-x: hidden;
         }
 
-        /* Sections */
         .section {
             display: none;
             padding: 20px;
-            animation: fadeIn 0.3s ease;
         }
 
         .section.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Shooter Info Section */
         .info-card {
             background: var(--dark-card);
             border: 1px solid var(--border);
@@ -126,7 +127,26 @@
             font-size: 18px;
             margin-bottom: 16px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+
+        .ai-feature-box {
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid var(--ai-blue);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .ai-feature-box h3 {
+            color: var(--ai-blue);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .ai-feature-box p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -138,8 +158,6 @@
             color: var(--text-secondary);
             font-size: 14px;
             margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .form-group input {
@@ -150,14 +168,11 @@
             border-radius: 8px;
             color: var(--text-primary);
             font-size: 16px;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-            transition: all 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
         }
 
         .current-session {
@@ -173,16 +188,6 @@
             display: block;
         }
 
-        .current-session p {
-            margin: 6px 0;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-        }
-
-        .current-session strong {
-            color: var(--secondary);
-        }
-
-        /* Camera Section */
         .camera-container {
             position: relative;
             background: #000;
@@ -192,14 +197,14 @@
             aspect-ratio: 4/3;
         }
 
-        #video, #photo {
+        #video, #photo-display {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            display: block;
+            object-fit: contain;
+            background: #000;
         }
 
-        #photo {
+        #photo-display {
             display: none;
         }
 
@@ -212,33 +217,31 @@
             height: 60px;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.3s;
         }
 
         .crosshair.visible {
             opacity: 1;
         }
 
-        .crosshair::before,
-        .crosshair::after {
+        .crosshair::before {
             content: '';
             position: absolute;
-            background-color: var(--primary);
-        }
-
-        .crosshair::before {
             top: 50%;
             left: 0;
             right: 0;
             height: 2px;
+            background: var(--primary);
             transform: translateY(-50%);
         }
 
         .crosshair::after {
+            content: '';
+            position: absolute;
             left: 50%;
             top: 0;
             bottom: 0;
             width: 2px;
+            background: var(--primary);
             transform: translateX(-50%);
         }
 
@@ -263,7 +266,7 @@
             font-size: 14px;
             border: 1px solid var(--primary);
             opacity: 0;
-            transition: opacity 0.3s;
+            z-index: 10;
         }
 
         .camera-status.visible {
@@ -279,102 +282,148 @@
             background: white;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s;
         }
 
         .flash.active {
             opacity: 0.8;
+            transition: opacity 0.2s;
         }
 
-        /* Scoring Overlay */
-        .scoring-overlay {
+        .ai-processing {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.9);
             display: none;
-            padding: 20px;
-            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 100;
         }
 
-        .scoring-overlay.active {
-            display: block;
+        .ai-processing.active {
+            display: flex;
         }
 
-        .scoring-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+        .ai-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--dark-elevated);
+            border-top: 4px solid var(--ai-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
 
-        .target-input {
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-status-text {
+            color: var(--ai-blue);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .ai-status-detail {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        .score-panel {
             background: var(--dark-card);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 12px 8px;
+            border: 2px solid var(--ai-blue);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .score-panel h3 {
+            color: var(--ai-blue);
+            font-size: 18px;
+            margin-bottom: 16px;
             text-align: center;
         }
 
-        .target-input.scored {
-            border-color: var(--success);
-            background: rgba(76, 175, 80, 0.1);
+        .score-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
-        .target-input label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-
-        .target-input input {
-            width: 100%;
-            padding: 8px;
+        .stat-box {
             background: var(--dark-bg);
             border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 16px 12px;
             text-align: center;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: 600;
         }
 
-        .target-input input:focus {
-            outline: none;
-            border-color: var(--primary);
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-bottom: 8px;
         }
 
-        .scoring-summary {
-            background: var(--dark-elevated);
-            border: 2px solid var(--primary);
+        .stat-value {
+            color: var(--ai-blue);
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .photo-canvas-container {
+            position: relative;
+            background: #000;
             border-radius: 12px;
-            padding: 16px;
+            overflow: hidden;
             margin-bottom: 20px;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
         }
 
-        .scoring-summary h3 {
-            color: var(--secondary);
-            margin-bottom: 12px;
+        #photo-canvas {
+            width: 100%;
+            display: block;
+        }
+
+        .marker {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: var(--ai-blue);
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+            color: #000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+        }
+
+        .score-label {
+            position: absolute;
+            background: var(--ai-blue);
+            color: #000;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-size: 18px;
+            font-weight: 900;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
         }
 
-        .scoring-summary p {
-            margin: 8px 0;
-            font-size: 16px;
-        }
-
-        .score-value {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 24px;
-        }
-
-        /* Buttons */
         .btn {
             width: 100%;
             padding: 16px;
@@ -383,31 +432,27 @@
             font-size: 16px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
-
         .btn-primary {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
         }
 
         .btn-primary:disabled {
             background: var(--dark-elevated);
             color: var(--text-secondary);
-            cursor: not-allowed;
-            box-shadow: none;
+        }
+
+        .btn-ai {
+            background: var(--ai-blue);
+            color: #000;
+            font-weight: 900;
         }
 
         .btn-success {
@@ -420,70 +465,35 @@
             color: white;
         }
 
-        .btn-secondary {
-            background: var(--dark-elevated);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 16px;
         }
 
-        /* Gallery */
-        .gallery-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-
-        .filter-btn {
-            padding: 10px 16px;
-            background: var(--dark-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
             color: var(--text-secondary);
-            font-size: 14px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .gallery-grid {
+        .gallery-grid, .leaderboard {
             display: grid;
             gap: 16px;
         }
 
-        .session-card {
+        .session-card, .leaderboard-item {
             background: var(--dark-card);
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .session-card:active {
-            transform: scale(0.98);
-            border-color: var(--primary);
         }
 
         .session-card img {
             width: 100%;
             aspect-ratio: 4/3;
             object-fit: cover;
-            background: #000;
         }
 
         .session-info {
@@ -493,7 +503,6 @@
         .session-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 8px;
         }
 
@@ -506,41 +515,20 @@
         .session-score {
             font-size: 24px;
             font-weight: 700;
-            color: var(--secondary);
-            font-family: Monaco, Consolas, 'Courier New', monospace;
+            color: var(--ai-blue);
         }
 
         .session-meta {
             color: var(--text-secondary);
             font-size: 12px;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-        }
-
-        /* Reports */
         .report-header {
             background: var(--dark-card);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-        }
-
-        .report-header h2 {
-            color: var(--secondary);
-            font-size: 20px;
-            margin-bottom: 12px;
         }
 
         .report-stats {
@@ -550,38 +538,7 @@
             margin-top: 16px;
         }
 
-        .stat-box {
-            background: var(--dark-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            color: var(--primary);
-            font-size: 24px;
-            font-weight: 700;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-        }
-
-        .leaderboard {
-            display: grid;
-            gap: 12px;
-        }
-
         .leaderboard-item {
-            background: var(--dark-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
             padding: 16px;
             display: flex;
             align-items: center;
@@ -598,22 +555,6 @@
             justify-content: center;
             font-size: 20px;
             font-weight: 700;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-        }
-
-        .leaderboard-item:nth-child(1) .leaderboard-rank {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: #000;
-        }
-
-        .leaderboard-item:nth-child(2) .leaderboard-rank {
-            background: linear-gradient(135deg, #C0C0C0 0%, #808080 100%);
-            color: #000;
-        }
-
-        .leaderboard-item:nth-child(3) .leaderboard-rank {
-            background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
-            color: #fff;
         }
 
         .leaderboard-info {
@@ -623,144 +564,47 @@
         .leaderboard-name {
             font-size: 18px;
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
         }
 
         .leaderboard-meta {
             color: var(--text-secondary);
             font-size: 12px;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
         }
 
         .leaderboard-score {
             font-size: 32px;
             font-weight: 700;
             color: var(--secondary);
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-            text-align: right;
-        }
-
-        .leaderboard-x {
-            font-size: 14px;
-            color: var(--primary);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            overflow-y: auto;
-        }
-
-        .modal.active {
-            display: block;
-        }
-
-        .modal-content {
-            padding: 80px 20px 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .modal-close {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            width: 48px;
-            height: 48px;
-            background: var(--danger);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2001;
-        }
-
-        .modal-image {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .detail-section {
-            background: var(--dark-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .detail-section h3 {
-            color: var(--secondary);
-            font-size: 16px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .detail-target {
-            background: var(--dark-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-            font-family: Monaco, Consolas, 'Courier New', monospace;
-        }
-
-        .detail-target-label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .detail-target-score {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
-        <h1>🎯 TEIKEN TELLING</h1>
+        <h1>🎯 TEIKEN TELLING <span class="ai-badge">AI</span></h1>
         <div class="header-actions">
-            <button class="icon-btn" onclick="showSection('capture')" title="Kamera">📷</button>
-            <button class="icon-btn" onclick="showSection('gallery')" title="Galery">🖼️</button>
-            <button class="icon-btn" onclick="showSection('reports')" title="Verslae">📊</button>
+            <button class="icon-btn" onclick="showSection('capture')">📷</button>
+            <button class="icon-btn" onclick="showSection('gallery')">🖼️</button>
+            <button class="icon-btn" onclick="showSection('reports')">📊</button>
         </div>
     </div>
 
-    <!-- Main Container -->
     <div class="main-container">
-        
-        <!-- Capture Section -->
         <div id="capture-section" class="section active">
             <div class="info-card">
                 <h2>📋 Skutter Inligting</h2>
+                
+                <div class="ai-feature-box">
+                    <h3>🤖 AI OUTOMATIESE TELLING</h3>
+                    <p>✨ Neem foto → AI identifiseer gate → Bereken tellings → Wys resultate!</p>
+                    <p>⚡ Vinnig, akkuraat, heeltemal outomaties!</p>
+                </div>
+
                 <div class="form-group">
-                    <label>Skutter Naam / Nommer *</label>
-                    <input type="text" id="shooter-name" placeholder="Voer naam of nommer in...">
+                    <label>Skutter Naam *</label>
+                    <input type="text" id="shooter-name" placeholder="Voer naam in...">
                 </div>
                 <div class="form-group">
-                    <label>Sessie Datum</label>
+                    <label>Datum</label>
                     <input type="date" id="session-date" readonly>
                 </div>
                 
@@ -772,62 +616,68 @@
 
             <div class="camera-container">
                 <video id="video" autoplay playsinline></video>
-                <img id="photo" alt="Captured photo">
+                <img id="photo-display">
                 <div class="crosshair" id="crosshair">
                     <div class="crosshair-circle"></div>
                 </div>
-                <div class="camera-status" id="camera-status">GEREED OM TE SKIET</div>
+                <div class="camera-status" id="camera-status">GEREED</div>
                 <div class="flash" id="flash"></div>
-
-                <!-- Scoring Overlay -->
-                <div class="scoring-overlay" id="scoring-overlay">
-                    <div class="scoring-summary">
-                        <h3>TELLING OPSOMMING</h3>
-                        <p>Tellings: <span id="scored-count">0</span> / 25</p>
-                        <p>Totaal: <span class="score-value" id="total-score">0</span> / 250</p>
-                        <p>X-Telling: <span class="score-value" id="x-count">0</span></p>
-                    </div>
-                    
-                    <div class="scoring-grid" id="scoring-grid">
-                        <!-- Generated by JS -->
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="saveSession()">💾 STOOR</button>
-                        <button class="btn btn-danger" onclick="rejectSession()">❌ VERWERP</button>
-                    </div>
+                
+                <div class="ai-processing" id="ai-processing">
+                    <div class="ai-spinner"></div>
+                    <div class="ai-status-text" id="ai-status-text">🤖 AI ANALISEER...</div>
+                    <div class="ai-status-detail" id="ai-status-detail">Identifiseer gate...</div>
                 </div>
             </div>
 
-            <button class="btn btn-primary" id="start-camera-btn" onclick="startCamera()" disabled>
-                📷 BEGIN KAMERA
-            </button>
-            <button class="btn btn-primary" id="capture-btn" onclick="capturePhoto()" style="display:none;">
-                📸 NEEM FOTO
-            </button>
+            <div class="results-container" id="results-container">
+                <div class="score-panel">
+                    <h3>🤖 AI RESULTATE</h3>
+                    <div class="score-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">Gate</div>
+                            <div class="stat-value" style="color:var(--success);" id="holes-found">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Totaal</div>
+                            <div class="stat-value" id="total-score">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">X's</div>
+                            <div class="stat-value" style="color:var(--secondary);" id="x-count">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="photo-canvas-container">
+                    <canvas id="photo-canvas"></canvas>
+                    <div id="markers-container"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveSession()">💾 STOOR</button>
+                    <button class="btn btn-danger" onclick="rejectSession()">❌ VERWERP</button>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="start-camera-btn" onclick="startCamera()" disabled>📷 BEGIN</button>
+            <button class="btn btn-ai" id="capture-btn" onclick="capturePhoto()" style="display:none;">🤖 NEEM FOTO & ANALISEER</button>
         </div>
 
-        <!-- Gallery Section -->
         <div id="gallery-section" class="section">
-            <div class="gallery-filters" id="date-filters">
-                <!-- Generated by JS -->
-            </div>
-            <div class="gallery-grid" id="gallery-grid">
-                <!-- Generated by JS -->
-            </div>
+            <div class="gallery-grid" id="gallery-grid"></div>
         </div>
 
-        <!-- Reports Section -->
         <div id="reports-section" class="section">
             <div class="report-header">
-                <h2>📊 TEIKEN VERSLAG</h2>
+                <h2>📊 VERSLAG</h2>
                 <div class="report-stats">
                     <div class="stat-box">
                         <div class="stat-label">Sessies</div>
                         <div class="stat-value" id="total-sessions">0</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-label">Gem. Telling</div>
+                        <div class="stat-label">Gemiddeld</div>
                         <div class="stat-value" id="avg-score">0</div>
                     </div>
                     <div class="stat-box">
@@ -836,491 +686,302 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="leaderboard" id="leaderboard">
-                <!-- Generated by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Session Detail Modal -->
-    <div id="session-modal" class="modal">
-        <button class="modal-close" onclick="closeModal()">✕</button>
-        <div class="modal-content" id="modal-content">
-            <!-- Generated by JS -->
+            <div class="leaderboard" id="leaderboard"></div>
         </div>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
-        // IndexedDB Setup
-        let db;
+        let db, currentStream = null, currentPhoto = null, currentResults = null;
         const DB_NAME = 'TargetScoringDB';
-        const DB_VERSION = 1;
 
         function initDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                
-                request.onerror = () => reject(request.error);
-                request.onsuccess = () => {
-                    db = request.result;
-                    resolve(db);
-                };
-                
-                request.onupgradeneeded = (event) => {
-                    db = event.target.result;
+            return new Promise((resolve) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onsuccess = () => resolve(db = request.result);
+                request.onupgradeneeded = (e) => {
+                    db = e.target.result;
                     if (!db.objectStoreNames.contains('sessions')) {
-                        const objectStore = db.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
-                        objectStore.createIndex('date', 'date', { unique: false });
-                        objectStore.createIndex('shooter', 'shooter', { unique: false });
-                        objectStore.createIndex('score', 'totalScore', { unique: false });
+                        const store = db.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('date', 'date', { unique: false });
                     }
                 };
             });
         }
 
-        // State
-        let currentStream = null;
-        let currentPhoto = null;
-        let currentScores = Array(25).fill(null);
-        let currentXCounts = Array(25).fill(0);
-
-        // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             await initDB();
+            document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
             
-            // Set today's date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('session-date').value = today;
-            
-            // Enable camera button when name is entered
-            document.getElementById('shooter-name').addEventListener('input', (e) => {
-                const startBtn = document.getElementById('start-camera-btn');
-                const sessionInfo = document.getElementById('current-session-info');
-                const sessionDisplay = document.getElementById('session-display');
-                
-                if (e.target.value.trim()) {
-                    startBtn.disabled = false;
-                    sessionInfo.classList.add('active');
-                    sessionDisplay.textContent = `${e.target.value} - ${formatDate(today)}`;
-                } else {
-                    startBtn.disabled = true;
-                    sessionInfo.classList.remove('active');
-                }
-            });
+            document.getElementById('shooter-name').oninput = (e) => {
+                const val = e.target.value.trim();
+                document.getElementById('start-camera-btn').disabled = !val;
+                document.getElementById('current-session-info').classList.toggle('active', !!val);
+                if (val) document.getElementById('session-display').textContent = val;
+            };
 
             loadGallery();
             loadReports();
         });
 
-        // Camera Functions
         async function startCamera() {
-            const shooterName = document.getElementById('shooter-name').value.trim();
-            if (!shooterName) {
-                alert('⚠️ Voer asseblief skutter naam in!');
+            if (!document.getElementById('shooter-name').value.trim()) {
+                alert('⚠️ Voer naam in!');
                 return;
             }
 
             try {
                 currentStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: 'environment' },
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    }
+                    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
                 });
-
-                const video = document.getElementById('video');
-                video.srcObject = currentStream;
-                
+                document.getElementById('video').srcObject = currentStream;
                 document.getElementById('crosshair').classList.add('visible');
                 document.getElementById('camera-status').classList.add('visible');
                 document.getElementById('start-camera-btn').style.display = 'none';
                 document.getElementById('capture-btn').style.display = 'block';
-                
-            } catch (error) {
-                console.error('Camera error:', error);
-                alert('❌ Kon nie kamera oopmaak nie. Gee asseblief toestemming.');
+            } catch (e) {
+                alert('❌ Kamera fout');
             }
         }
 
-        function capturePhoto() {
+        async function capturePhoto() {
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
-            const photo = document.getElementById('photo');
-            const flash = document.getElementById('flash');
             
-            // Flash effect
-            flash.classList.add('active');
-            setTimeout(() => flash.classList.remove('active'), 200);
+            document.getElementById('flash').classList.add('active');
+            setTimeout(() => document.getElementById('flash').classList.remove('active'), 200);
             
-            // Capture
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            
+            canvas.getContext('2d').drawImage(video, 0, 0);
             currentPhoto = canvas.toDataURL('image/jpeg', 0.95);
-            photo.src = currentPhoto;
             
-            // Stop camera
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
+            document.getElementById('photo-display').src = currentPhoto;
+            if (currentStream) currentStream.getTracks().forEach(t => t.stop());
             
-            // Show photo and scoring
             video.style.display = 'none';
-            photo.style.display = 'block';
+            document.getElementById('photo-display').style.display = 'block';
             document.getElementById('crosshair').classList.remove('visible');
             document.getElementById('camera-status').classList.remove('visible');
             document.getElementById('capture-btn').style.display = 'none';
             
-            // Initialize scoring
-            initScoring();
+            await processWithAI();
         }
 
-        function initScoring() {
-            currentScores = Array(25).fill(null);
-            currentXCounts = Array(25).fill(0);
-            
-            const grid = document.getElementById('scoring-grid');
-            grid.innerHTML = '';
-            
-            for (let i = 0; i < 25; i++) {
-                const targetDiv = document.createElement('div');
-                targetDiv.className = 'target-input';
-                targetDiv.innerHTML = `
-                    <label>T${i + 1}</label>
-                    <input type="number" 
-                           id="score-${i}" 
-                           min="0" 
-                           max="10" 
-                           placeholder="0"
-                           onchange="updateScore(${i}, this.value)">
-                    <input type="number" 
-                           id="x-${i}" 
-                           min="0" 
-                           max="1" 
-                           placeholder="X"
-                           onchange="updateX(${i}, this.value)"
-                           style="margin-top:4px; font-size:12px;">
-                `;
-                grid.appendChild(targetDiv);
+        async function processWithAI() {
+            document.getElementById('ai-processing').classList.add('active');
+
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 4000,
+                        messages: [{
+                            role: "user",
+                            content: [
+                                { type: "image", source: { type: "base64", media_type: "image/jpeg", data: currentPhoto.split(',')[1] } },
+                                { type: "text", text: `Analiseer hierdie skietteiken foto met 25 teikens (5x5 grid).
+
+Vir elke gat:
+- Posisie as % (x%, y%) waar 0,0 = links-bo
+- Telling (0-10) gebaseer op afstand van middel
+- Is dit 'n X? (perfek middel)
+
+Gee slegs JSON (geen teks):
+{"targets":[{"number":1,"x":10,"y":15,"score":9,"isX":true}],"totalScore":0,"xCount":0,"holesFound":0}`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('AI failed');
+
+                const data = await response.json();
+                let text = data.content.filter(i => i.type === 'text').map(i => i.text).join('');
+                text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                
+                currentResults = JSON.parse(text);
+                currentResults.holesFound = currentResults.holesFound || currentResults.targets?.length || 0;
+
+                document.getElementById('ai-status-text').textContent = '✅ KLAAR!';
+                document.getElementById('ai-status-detail').textContent = `${currentResults.holesFound} gate, ${currentResults.totalScore} punte`;
+                
+                setTimeout(() => {
+                    document.getElementById('ai-processing').classList.remove('active');
+                    displayResults();
+                }, 1500);
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('ai-status-text').textContent = '❌ FOUT!';
+                setTimeout(() => {
+                    document.getElementById('ai-processing').classList.remove('active');
+                    alert('❌ AI het gefaal');
+                    resetCapture();
+                }, 2000);
             }
-            
-            document.getElementById('scoring-overlay').classList.add('active');
-            updateScoringSummary();
         }
 
-        function updateScore(index, value) {
-            const numValue = parseInt(value) || 0;
-            currentScores[index] = Math.max(0, Math.min(10, numValue));
-            
-            const targetDiv = document.getElementById(`score-${index}`).parentElement;
-            if (currentScores[index] !== null) {
-                targetDiv.classList.add('scored');
-            }
-            
-            updateScoringSummary();
-        }
+        function displayResults() {
+            document.getElementById('holes-found').textContent = currentResults.holesFound;
+            document.getElementById('total-score').textContent = currentResults.totalScore;
+            document.getElementById('x-count').textContent = currentResults.xCount;
 
-        function updateX(index, value) {
-            const numValue = parseInt(value) || 0;
-            currentXCounts[index] = Math.max(0, Math.min(1, numValue));
-            updateScoringSummary();
-        }
+            const canvas = document.getElementById('photo-canvas');
+            const img = new Image();
+            img.onload = () => {
+                const w = canvas.parentElement.clientWidth;
+                const scale = w / img.width;
+                canvas.width = w;
+                canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const markers = document.getElementById('markers-container');
+                markers.innerHTML = '';
+                
+                currentResults.targets.forEach(t => {
+                    const x = (t.x / 100) * canvas.width;
+                    const y = (t.y / 100) * canvas.height;
+                    
+                    const m = document.createElement('div');
+                    m.className = 'marker';
+                    m.style.left = x + 'px';
+                    m.style.top = y + 'px';
+                    m.textContent = t.number;
+                    markers.appendChild(m);
+                    
+                    const l = document.createElement('div');
+                    l.className = 'score-label';
+                    l.style.left = (x + 25) + 'px';
+                    l.style.top = (y - 15) + 'px';
+                    l.textContent = t.score + (t.isX ? 'X' : '');
+                    markers.appendChild(l);
+                });
+            };
+            img.src = currentPhoto;
 
-        function updateScoringSummary() {
-            const scored = currentScores.filter(s => s !== null).length;
-            const total = currentScores.reduce((sum, s) => sum + (s || 0), 0);
-            const xCount = currentXCounts.reduce((sum, x) => sum + x, 0);
-            
-            document.getElementById('scored-count').textContent = scored;
-            document.getElementById('total-score').textContent = total;
-            document.getElementById('x-count').textContent = xCount;
+            document.getElementById('results-container').classList.add('active');
         }
 
         async function saveSession() {
-            const scored = currentScores.filter(s => s !== null).length;
-            if (scored < 25) {
-                if (!confirm(`⚠️ Net ${scored}/25 teikens geteld. Stoor steeds?`)) {
-                    return;
-                }
-            }
-
-            const shooterName = document.getElementById('shooter-name').value.trim();
+            const name = document.getElementById('shooter-name').value.trim();
             const date = document.getElementById('session-date').value;
-            const totalScore = currentScores.reduce((sum, s) => sum + (s || 0), 0);
-            const xCount = currentXCounts.reduce((sum, x) => sum + x, 0);
-
+            
             const session = {
-                shooter: shooterName,
+                shooter: name,
                 date: date,
                 timestamp: new Date().toISOString(),
                 photo: currentPhoto,
-                scores: currentScores,
-                xCounts: currentXCounts,
-                totalScore: totalScore,
-                xCount: xCount
+                targets: currentResults.targets,
+                totalScore: currentResults.totalScore,
+                xCount: currentResults.xCount,
+                holesFound: currentResults.holesFound
             };
 
             try {
-                const transaction = db.transaction(['sessions'], 'readwrite');
-                const store = transaction.objectStore('sessions');
-                await store.add(session);
+                await db.transaction(['sessions'], 'readwrite').objectStore('sessions').add(session);
+                alert(`✅ Gestoor!\n\n${name}\n${currentResults.holesFound} gate\n${currentResults.totalScore}/250 punte\n${currentResults.xCount} X's`);
                 
-                alert(`✅ Sessie gestoor!\n\nSkutter: ${shooterName}\nTelling: ${totalScore}/250\nX's: ${xCount}`);
-                
-                // Download photo
                 const link = document.createElement('a');
                 link.href = currentPhoto;
-                link.download = `${date}_${shooterName.replace(/\s+/g, '_')}_${totalScore}.jpg`;
+                link.download = `${date}_${name.replace(/\s+/g, '_')}_${currentResults.totalScore}_AI.jpg`;
                 link.click();
                 
-                // Reset
                 resetCapture();
                 loadGallery();
                 loadReports();
-                
-            } catch (error) {
-                console.error('Save error:', error);
-                alert('❌ Fout met stoor. Probeer weer.');
+            } catch (e) {
+                alert('❌ Stoor fout');
             }
         }
 
         function rejectSession() {
-            if (confirm('❌ Verwerp hierdie sessie?')) {
-                resetCapture();
-            }
+            if (confirm('❌ Verwerp?')) resetCapture();
         }
 
         function resetCapture() {
             currentPhoto = null;
-            currentScores = Array(25).fill(null);
-            currentXCounts = Array(25).fill(0);
-            
-            document.getElementById('photo').style.display = 'none';
+            currentResults = null;
+            document.getElementById('photo-display').style.display = 'none';
             document.getElementById('video').style.display = 'block';
-            document.getElementById('scoring-overlay').classList.remove('active');
+            document.getElementById('results-container').classList.remove('active');
             document.getElementById('capture-btn').style.display = 'none';
             document.getElementById('start-camera-btn').style.display = 'block';
             document.getElementById('shooter-name').value = '';
             document.getElementById('current-session-info').classList.remove('active');
             document.getElementById('start-camera-btn').disabled = true;
+            document.getElementById('markers-container').innerHTML = '';
         }
 
-        // Gallery Functions
-        async function loadGallery(filterDate = null) {
-            const transaction = db.transaction(['sessions'], 'readonly');
-            const store = transaction.objectStore('sessions');
-            const request = store.getAll();
-            
-            request.onsuccess = () => {
-                const sessions = request.result;
-                
-                // Get unique dates
-                const dates = [...new Set(sessions.map(s => s.date))].sort().reverse();
-                
-                // Render date filters
-                const filtersDiv = document.getElementById('date-filters');
-                filtersDiv.innerHTML = `
-                    <button class="filter-btn ${!filterDate ? 'active' : ''}" onclick="loadGallery(null)">
-                        ALLES (${sessions.length})
-                    </button>
-                `;
-                
-                dates.forEach(date => {
-                    const count = sessions.filter(s => s.date === date).length;
-                    filtersDiv.innerHTML += `
-                        <button class="filter-btn ${filterDate === date ? 'active' : ''}" 
-                                onclick="loadGallery('${date}')">
-                            ${formatDate(date)} (${count})
-                        </button>
-                    `;
-                });
-                
-                // Filter sessions
-                const filtered = filterDate ? sessions.filter(s => s.date === filterDate) : sessions;
-                
-                // Render gallery
-                const gridDiv = document.getElementById('gallery-grid');
-                if (filtered.length === 0) {
-                    gridDiv.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📷</div>
-                            <p>Geen sessies gevind nie</p>
-                        </div>
-                    `;
-                } else {
-                    gridDiv.innerHTML = filtered.map(session => `
-                        <div class="session-card" onclick="viewSession(${session.id})">
-                            <img src="${session.photo}" alt="Session ${session.id}">
-                            <div class="session-info">
-                                <div class="session-header">
-                                    <div class="session-name">${session.shooter}</div>
-                                    <div class="session-score">${session.totalScore}</div>
-                                </div>
-                                <div class="session-meta">
-                                    ${formatDate(session.date)} • ${session.xCount} X's • ${formatTime(session.timestamp)}
-                                </div>
+        async function loadGallery() {
+            const sessions = await new Promise(r => {
+                const req = db.transaction(['sessions']).objectStore('sessions').getAll();
+                req.onsuccess = () => r(req.result.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)));
+            });
+
+            const grid = document.getElementById('gallery-grid');
+            if (!sessions.length) {
+                grid.innerHTML = '<div class="empty-state"><div style="font-size:64px;opacity:0.3;">📷</div><p>Geen sessies</p></div>';
+            } else {
+                grid.innerHTML = sessions.map(s => `
+                    <div class="session-card">
+                        <img src="${s.photo}">
+                        <div class="session-info">
+                            <div class="session-header">
+                                <div class="session-name">${s.shooter}</div>
+                                <div class="session-score">${s.totalScore}</div>
                             </div>
-                        </div>
-                    `).join('');
-                }
-            };
-        }
-
-        async function viewSession(id) {
-            const transaction = db.transaction(['sessions'], 'readonly');
-            const store = transaction.objectStore('sessions');
-            const request = store.get(id);
-            
-            request.onsuccess = () => {
-                const session = request.result;
-                if (!session) return;
-                
-                const modalContent = document.getElementById('modal-content');
-                modalContent.innerHTML = `
-                    <img src="${session.photo}" class="modal-image" alt="Session photo">
-                    
-                    <div class="detail-section">
-                        <h3>📋 SESSIE INLIGTING</h3>
-                        <p style="margin:8px 0;"><strong>Skutter:</strong> ${session.shooter}</p>
-                        <p style="margin:8px 0;"><strong>Datum:</strong> ${formatDate(session.date)}</p>
-                        <p style="margin:8px 0;"><strong>Tyd:</strong> ${formatTime(session.timestamp)}</p>
-                        <p style="margin:8px 0;"><strong>Totale Telling:</strong> <span class="score-value">${session.totalScore}</span> / 250</p>
-                        <p style="margin:8px 0;"><strong>X-Telling:</strong> <span class="score-value">${session.xCount}</span></p>
-                    </div>
-                    
-                    <div class="detail-section">
-                        <h3>🎯 TEIKEN TELLINGS</h3>
-                        <div class="detail-grid">
-                            ${session.scores.map((score, i) => `
-                                <div class="detail-target">
-                                    <div class="detail-target-label">T${i + 1}</div>
-                                    <div class="detail-target-score">
-                                        ${score !== null ? score : '-'}
-                                        ${session.xCounts[i] ? '<span style="color:var(--secondary);">X</span>' : ''}
-                                    </div>
-                                </div>
-                            `).join('')}
+                            <div class="session-meta">🤖 ${s.holesFound} gate • ${s.xCount} X's • ${s.date}</div>
                         </div>
                     </div>
-                    
-                    <button class="btn btn-danger" onclick="deleteSession(${id})">
-                        🗑️ VERWYDER SESSIE
-                    </button>
-                `;
-                
-                document.getElementById('session-modal').classList.add('active');
-            };
-        }
-
-        function closeModal() {
-            document.getElementById('session-modal').classList.remove('active');
-        }
-
-        async function deleteSession(id) {
-            if (!confirm('⚠️ Verwyder hierdie sessie permanent?')) return;
-            
-            const transaction = db.transaction(['sessions'], 'readwrite');
-            const store = transaction.objectStore('sessions');
-            await store.delete(id);
-            
-            closeModal();
-            loadGallery();
-            loadReports();
-            alert('✅ Sessie verwyder');
-        }
-
-        // Reports Functions
-        async function loadReports() {
-            const transaction = db.transaction(['sessions'], 'readonly');
-            const store = transaction.objectStore('sessions');
-            const request = store.getAll();
-            
-            request.onsuccess = () => {
-                const sessions = request.result;
-                
-                // Stats
-                const totalSessions = sessions.length;
-                const avgScore = totalSessions > 0 
-                    ? Math.round(sessions.reduce((sum, s) => sum + s.totalScore, 0) / totalSessions)
-                    : 0;
-                const highScore = totalSessions > 0
-                    ? Math.max(...sessions.map(s => s.totalScore))
-                    : 0;
-                
-                document.getElementById('total-sessions').textContent = totalSessions;
-                document.getElementById('avg-score').textContent = avgScore;
-                document.getElementById('high-score').textContent = highScore;
-                
-                // Leaderboard (sorted by score desc, then X's desc)
-                const sorted = [...sessions].sort((a, b) => {
-                    if (b.totalScore !== a.totalScore) {
-                        return b.totalScore - a.totalScore;
-                    }
-                    return b.xCount - a.xCount;
-                });
-                
-                const leaderboardDiv = document.getElementById('leaderboard');
-                if (sorted.length === 0) {
-                    leaderboardDiv.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📊</div>
-                            <p>Geen sessies om te vertoon nie</p>
-                        </div>
-                    `;
-                } else {
-                    leaderboardDiv.innerHTML = sorted.map((session, index) => `
-                        <div class="leaderboard-item" onclick="viewSession(${session.id})">
-                            <div class="leaderboard-rank">${index + 1}</div>
-                            <div class="leaderboard-info">
-                                <div class="leaderboard-name">${session.shooter}</div>
-                                <div class="leaderboard-meta">
-                                    ${formatDate(session.date)} • ${formatTime(session.timestamp)}
-                                </div>
-                            </div>
-                            <div class="leaderboard-score">
-                                ${session.totalScore}
-                                <div class="leaderboard-x">${session.xCount} X's</div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            };
-        }
-
-        // Navigation
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`${section}-section`).classList.add('active');
-            
-            if (section === 'gallery') loadGallery();
-            if (section === 'reports') loadReports();
-        }
-
-        // Utilities
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const day = date.getDate();
-            const months = ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'];
-            return `${day} ${months[date.getMonth()]} ${date.getFullYear()}`;
-        }
-
-        function formatTime(isoStr) {
-            const date = new Date(isoStr);
-            return date.toLocaleTimeString('af-ZA', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
+                `).join('');
             }
-        });
+        }
+
+        async function loadReports() {
+            const sessions = await new Promise(r => {
+                const req = db.transaction(['sessions']).objectStore('sessions').getAll();
+                req.onsuccess = () => r(req.result);
+            });
+
+            const total = sessions.length;
+            const avg = total ? Math.round(sessions.reduce((s,a) => s + a.totalScore, 0) / total) : 0;
+            const high = total ? Math.max(...sessions.map(s => s.totalScore)) : 0;
+
+            document.getElementById('total-sessions').textContent = total;
+            document.getElementById('avg-score').textContent = avg;
+            document.getElementById('high-score').textContent = high;
+
+            const sorted = sessions.sort((a,b) => b.totalScore !== a.totalScore ? b.totalScore - a.totalScore : b.xCount - a.xCount);
+            const board = document.getElementById('leaderboard');
+            
+            if (!sorted.length) {
+                board.innerHTML = '<div class="empty-state"><div style="font-size:64px;opacity:0.3;">📊</div><p>Geen data</p></div>';
+            } else {
+                board.innerHTML = sorted.map((s,i) => `
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">${i+1}</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">${s.shooter}</div>
+                            <div class="leaderboard-meta">${s.date} • 🤖 AI</div>
+                        </div>
+                        <div class="leaderboard-score">${s.totalScore}<div style="font-size:14px;color:var(--primary);">${s.xCount} X's</div></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${name}-section`).classList.add('active');
+            if (name === 'gallery') loadGallery();
+            if (name === 'reports') loadReports();
+        }
+
+        window.onbeforeunload = () => currentStream?.getTracks().forEach(t => t.stop());
     </script>
 </body>
 </html>
