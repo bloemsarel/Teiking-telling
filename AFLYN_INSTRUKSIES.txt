@@ -1,0 +1,122 @@
+═══════════════════════════════════════════════════════════
+🎯 TEIKEN SKIET APP - AFLYN INSTRUKSIES
+═══════════════════════════════════════════════════════════
+
+✅ AFLYN FUNKSIONALITEIT: 100% WERKEND
+
+Die app werk nou VOLLEDIG AFLYN - geen internet verbinding nodig nie!
+
+═══════════════════════════════════════════════════════════
+📱 HOE OM TE INSTALLEER VIR AFLYN GEBRUIK:
+═══════════════════════════════════════════════════════════
+
+METODE 1: Android Chrome (Aanbeveel)
+────────────────────────────────────
+1. Maak die target-scoring-app.html oop in Chrome
+2. Tik op die ⋮ (3 kolletjies) regs bo
+3. Kies "Add to Home screen" / "Voeg by Tuisskerm"
+4. Tik "Add" / "Voeg by"
+5. App ikoon sal op jou tuisskerm verskyn
+6. Tik die ikoon om die app te open - werk aflyn! ✅
+
+METODE 2: Stoor op Foon
+────────────────────────────────────
+1. Kopieer die target-scoring-app.html lêer na jou foon
+2. Stoor dit in Downloads of Documents
+3. Open met Chrome/Firefox/Samsung Internet
+4. Bookmarks dit vir maklike toegang
+5. Werk aflyn! ✅
+
+═══════════════════════════════════════════════════════════
+💾 WAT WERK AFLYN:
+═══════════════════════════════════════════════════════════
+
+✅ Kamera funksie (geen internet nodig)
+✅ Foto's neem en stoor
+✅ Alle 25 teikens tel
+✅ Sessies stoor in foon se geheue
+✅ Galery besigtig
+✅ Verslae genereer
+✅ Leaderboard bekyk
+✅ Data bly bewaar (selfs na foon herlaai)
+
+═══════════════════════════════════════════════════════════
+⚠️ BELANGRIKE NOTAS:
+═══════════════════════════════════════════════════════════
+
+1. DATA STOOR LOKAAL
+   - Alle sessies word in die browser gestoor
+   - Data bly veilig op jou foon
+   - Moet nie browser data clear nie!
+
+2. FOTOS WORD AFGELAAI
+   - Wanneer jy "STOOR" druk
+   - Foto gaan na Downloads
+   - Naam: datum_naam_telling.jpg
+   - Bv: 2026-01-13_Johan_245.jpg
+
+3. BACKUP JOU DATA
+   - Screenshots van verslae neem
+   - Belangrike fotos backup na Google Drive/Cloud
+   - As jy browser data clear, verdwyn sessions
+
+4. KAMERA TOESTEMMING
+   - Eerste keer sal dit vra vir toestemming
+   - Kies "Allow" / "Toelaat"
+   - Sal onthou vir volgende kere
+
+═══════════════════════════════════════════════════════════
+🔧 TEGNIESE INLIGTING:
+═══════════════════════════════════════════════════════════
+
+• Tegnologie: HTML5, JavaScript, IndexedDB
+• Data Stoor: Browser IndexedDB (lokaal)
+• Foto Formaat: JPEG (hoeë kwaliteit)
+• Browser Ondersteuning: Chrome, Firefox, Safari, Edge
+• Platform: Android, iOS, Desktop
+• Internet Nodig: ❌ NEE - 100% AFLYN
+
+═══════════════════════════════════════════════════════════
+📊 FEATURES OPSOMMING:
+═══════════════════════════════════════════════════════════
+
+1. SKUTTER REGISTRASIE
+   ├─ Naam/nommer verplig
+   ├─ Datum outomaties
+   └─ Sessie info vertoon
+
+2. KAMERA & FOTO
+   ├─ Agter kamera (hoë resolusie)
+   ├─ Kruishaartjie vir mik
+   ├─ Flash effek
+   └─ Onmiddellike preview
+
+3. TELLING STELSEL
+   ├─ 25 individuele teikens
+   ├─ 0-10 punte per teiken
+   ├─ X-telling per teiken
+   ├─ Live totaal berekening
+   └─ Volledige scoring summary
+
+4. GALERY
+   ├─ Alle sessies besigtig
+   ├─ Filter per datum
+   ├─ Detailbeskrywings
+   └─ Verwyder opsie
+
+5. VERSLAE
+   ├─ Leaderboard (hoogste → laagste)
+   ├─ X-telling vir ties
+   ├─ Statistieke (totaal, gemiddeld, hoogste)
+   └─ Druk-vriendelike layout
+
+═══════════════════════════════════════════════════════════
+🎯 GENIET JOU SKIETBAAN APP!
+═══════════════════════════════════════════════════════════
+
+Vrae? Terugvoer? Verbeteringe?
+Laat weet gerus!
+
+Sterkte met die skiet! 🎯🔥
+
+═══════════════════════════════════════════════════════════
